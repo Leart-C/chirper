@@ -35,7 +35,30 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validate = $request->validate(
+            [
+                // 'message' => [
+                //     'required',
+                //     'string',
+                //     'max:255',
+                //     Rule::unique('chirps')->where(function ($query) use ($user) {
+                //         return $query->where('user_id', $user->id);
+                //     })
+                // ],
+                'message' => 'required|string|max:255',
+            ],
+            [
+                'message.required' => 'Please write something to chirp!',
+                'message.max' => 'Chirps must be 255 characters or less.',
+            ]
+        );
+
+        \App\Models\Chirp::create([
+            'message' => $validate['message'],
+            'user_id' => null,
+        ]);
+
+        return redirect('/')->with('success', 'Chirp created!');
     }
 
     /**
